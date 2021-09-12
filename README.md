@@ -44,7 +44,7 @@ VilNE currently:
    * Used by someone within a network to quickly conduct reconnaissance/exploit web interfaces - although I'm sure other tools will be used for this.
 
 
-## Limitations - and possible bypasses
+## Challenges and Limitations - and possible bypasses
 
 * CORS 
   *  https://book.hacktricks.xyz/pentesting-web/cors-bypass does highlight some bypasses to many of the CORS restrictions. However this tool is designed to not use things like CORS misconfigurations. 
@@ -53,3 +53,18 @@ VilNE currently:
 
 * Mixed-Content
   * Modern browsers are restrictive on the content that can be retrieved. E.g You cannot request HTTP content from an HTTPs page - This means that VilNE must be hosted on a HTTP page (or locally hosted - e.g. A phishing email with an HTML attachment). However, a compromised web page could simply redirect to the script which is hosted on HTTP on the malicious actors infrastructure.
+
+## Detection and Mitigation
+
+* Mitigation thoughts
+  * Patch - An obvious one - while not preventing the above scanning, it would at least prevent the botnet-like drive by exploitation.
+  * Browsers - Bulk scanning such as what this tool does could be restricted by browsers, by perhaps rate limiting or placing restrictions on unique IP/Port attempts, or failure codes across a series of hosts.
+  * Browsers - Browsers could maybe prevent parameters being sent until CORS is resolved, such as when doing pre-flight checks.  
+  * EDR - I haven't tested this on any EDR tools, however given the noise this would generate I would imagine it may come under existing rules for blocking of port scans.
+  * Web applications - As well as patch, ensure all applicable CORS + CSRF protections are in place and tested.
+  * Proxy/Enforcing WAF/IDS - Enforce ALL traffic connecting to a Web application to utilise security platforms such as a WAF with up-to-date rules. Implement least-privilege where possible so that only authorised users/IPs can connect.
+
+
+* Detection thoughts
+  * Port Scan detection rules - While within a subnet, port scanning detections using firewall logs is more of a challenge, however a rule which looks for a single internal host attempting the same port on many internal destinations should be considered.
+  * IDS/WAF/Proxy logs - By enforcing users into a path via IDS/WAF/Proxy in order to connect to a web application, you can ensure that detection opportunities are maximised. If you see an internal IP trigger a rule, this warrants attention!
