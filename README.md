@@ -5,7 +5,7 @@ VilNE Scanner
 
 ## What is VilNE?
 
-VilNE - *Victim Initiated Locale Network Enumerator/Exploiter (Villainy)* is a tool to show proof of concepts designed to highlight the potential attack surface present within an organisation's internal network. This attack surface will often be under-estimated with vulnerality management perhaps not giving it the attention that it requires. 
+VilNE - *Victim Initiated Locale Network Enumerator/Exploiter (Villainy)* is a tool to show proof of concepts which may highlight the potential attack surface present within an organisation's internal network. This attack surface will often be under-estimated with vulnerality management perhaps not giving it the attention that it requires. 
 
 ## Background
 
