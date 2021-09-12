@@ -2,12 +2,12 @@
 
 ![Overview](/images/V-1.0-Overview.png)
 
-##Setting up for yourself
+## Setting up for yourself
 
 This can be downloaded and launched in your browser, or hosted - however for it to work successfully it needs to be hosted on a HTTP server. This is due to browser restrictions on mixed content.
 
 
-##Configuration of tool
+## Configuration of tool
 Many of the below can be adjusted to suit your environment, although I've had most success with the defaults:
 
 * Class C Discovery Timeout
