@@ -10,7 +10,7 @@ I would like to also thank ** whose javascript development skills are insane in 
 
 ## What is VilNE?
 
-VilNE - *Victim Initiated Locale Network Enumerator/Exploiter (Villainy)* is a tool/proof of concept designed to highlight the potential attack surface present within an organisation's internal network. This attack surface will often be under-estimated with vulnerality management perhaps not giving it the attention that it requires. 
+VilNE - *Victim Initiated Locale Network Enumerator/Exploiter (Villainy)* is a tool to show proof of concepts designed to highlight the potential attack surface present within an organisation's internal network. This attack surface will often be under-estimated with vulnerality management perhaps not giving it the attention that it requires. 
 
 ## What does it do and how?
 
