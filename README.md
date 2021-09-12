@@ -23,7 +23,7 @@ VilNE currently:
 * It then scans these subnets for web-interfaces on a variety of ports - The tool will attempt multiple ports, such as 443, 80, 8080 where web-interfaces are commonly hosted.
 
 * "Attacks" these interfaces - Again due to CORS restrictions, it is not possible to see the contents returned by requests - but this does not stop the tool sending them. Therefore, any RCEs (Either un-authenticated or authenticated with weak CSRF protections), could still be successful. 
-  * Note - this uses 2 dummy attacks, but in principal this could be a large file externally hosted with a bank of attacks. (Maybe something like the Mirai botnet uses)
+  * Note - this uses 2 dummy attacks, a GET and a POST,  but in principal this could be a large file externally hosted with a bank of attacks. (Maybe something like the Mirai botnet uses)
 
 
 ## Why is it a problem?
