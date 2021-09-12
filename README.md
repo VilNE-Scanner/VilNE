@@ -1,7 +1,12 @@
 # VilNEPriv
 VilNE Scanner Private
 
-## Background - While recently reading about 
+## Background 
+
+I recently came upon a blog post about CORS bypasses using DNS Rebinding which interested me, I cannot remember exactly which one although it may have been https://book.hacktricks.xyz/pentesting-web/cors-bypass .  I have spent my career as a network defender and I have not had much experience with developing my own tools, but reading this got me interested to see what I could do in general. Quite honestly, I'm not sure that VilNE is doing anything new, and if this is already old news, well I've enjoyed learning a lot about any area which I had (and still have) not a huge amount of knowledge in. It has also opened my eyes to not being complacent about the trust I place on browsers and the internal network.
+
+I would like to also thank ** whose javascript development skills are insane in comparison to my year 2000 geocities levels of web coding! Also ** for providing well needed infrastructure for the testing of this.
+
 
 ## What is VilNE?
 
@@ -28,4 +33,5 @@ VilNE currently:
   
  * The concepts could be:
   * Embedded in a malicious website - Much like old EK redirect chains, I can envisage compromised websites being used to redirect users and/or have scripts embedded within that could be then used to proxy attacks on internal or external resources. 
-  Used by someone within a network to quickly conduct reconnaissance/exploit web interfaces 
+  * Used by an adversary/pentester by social engineering an internal user to conduct prior reconnaissance. 
+  * Used by someone within a network to quickly conduct reconnaissance/exploit web interfaces - although I'm sure other tools will be used for this.
