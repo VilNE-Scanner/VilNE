@@ -32,10 +32,10 @@ VilNE currently:
   * A web-page can be used to cause the browser to be a proxy for exploitation.
   
  * The concepts could be:
-  * Embedded in a malicious website - Much like old EK redirect chains, I can envisage compromised websites being used to redirect users and/or have scripts embedded within that could be then used to proxy attacks on internal or external resources. 
-  * Used by an adversary/pentester by social engineering an internal user to conduct prior reconnaissance. 
-  * Other exploits (e.g. CVE-2021-40444) use other internal browsers which will have less strict policies. In principal this could mean that the potential for attack techniques is greatly increased.
-  * Used by someone within a network to quickly conduct reconnaissance/exploit web interfaces - although I'm sure other tools will be used for this.
+   * Embedded in a malicious website - Much like old EK redirect chains, I can envisage compromised websites being used to redirect users and/or have scripts embedded within that could be then used to proxy attacks on internal or external resources. 
+   * Used by an adversary/pentester by social engineering an internal user to conduct prior reconnaissance. 
+   * Other exploits (e.g. CVE-2021-40444) use other internal browsers which will have less strict policies. In principal this could mean that the potential for attack techniques is greatly increased.
+   * Used by someone within a network to quickly conduct reconnaissance/exploit web interfaces - although I'm sure other tools will be used for this.
 
 
 ## Limitations - and possible bypasses
