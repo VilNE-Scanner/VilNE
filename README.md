@@ -13,7 +13,7 @@ I recently came upon a blog post about CORS bypasses using DNS Rebinding which i
 
 Quite honestly, I'm not sure that VilNE is doing anything new, and if this is already old news, well I've enjoyed learning a lot about any area which I had (and still have) not a huge amount of knowledge in. I feel that this may be an area which hasn't had much consideration, certainly as a defender this is going to give me a different view, and I think it bolsters the argument for zero trust and treating everything as hostile.
 
-I would like to also thank ** whose javascript development skills are insane in comparison to my year 2000 geocities levels of web coding! Also ** for providing well needed infrastructure for the testing of this.
+I would like to thank ** whose javascript development skills are insane in comparison to my year 2000 geocities levels of web coding! Also ** for providing well needed infrastructure for the testing of this.
 
 
 
