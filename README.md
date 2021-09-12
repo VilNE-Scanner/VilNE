@@ -1,16 +1,17 @@
-# VilNEPriv
-VilNE Scanner Private
+# VilNE
+VilNE Scanner 
 
-## Background 
-
-I recently came upon a blog post about CORS bypasses using DNS Rebinding which interested me, I cannot remember exactly which one although it may have been https://book.hacktricks.xyz/pentesting-web/cors-bypass .  I have spent my career as a network defender and I have not had much experience with developing my own tools, but reading this got me interested to see what I could do in general. Quite honestly, I'm not sure that VilNE is doing anything new, and if this is already old news, well I've enjoyed learning a lot about any area which I had (and still have) not a huge amount of knowledge in. As a defender this is going to give me a different view, and I think bolsters the argument for zero trust and treating everything as hostile.
-
-I would like to also thank ** whose javascript development skills are insane in comparison to my year 2000 geocities levels of web coding! Also ** for providing well needed infrastructure for the testing of this.
 
 
 ## What is VilNE?
 
 VilNE - *Victim Initiated Locale Network Enumerator/Exploiter (Villainy)* is a tool to show proof of concepts designed to highlight the potential attack surface present within an organisation's internal network. This attack surface will often be under-estimated with vulnerality management perhaps not giving it the attention that it requires. 
+
+## Background and Caveats
+
+I recently came upon a blog post about CORS bypasses using DNS Rebinding which interested me, I cannot remember exactly which one although it may have been https://book.hacktricks.xyz/pentesting-web/cors-bypass .  I have spent my career as a network defender and I have not had much experience with developing my own tools, but reading this got me interested to see what I could do in general. Quite honestly, I'm not sure that VilNE is doing anything new, and if this is already old news, well I've enjoyed learning a lot about any area which I had (and still have) not a huge amount of knowledge in. As a defender this is going to give me a different view, and I think bolsters the argument for zero trust and treating everything as hostile.
+
+I would like to also thank ** whose javascript development skills are insane in comparison to my year 2000 geocities levels of web coding! Also ** for providing well needed infrastructure for the testing of this.
 
 ## What does it do and how?
 
