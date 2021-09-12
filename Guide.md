@@ -4,7 +4,7 @@
 
 ## Setting up for yourself
 
-This can be downloaded and launched in your browser, or hosted - however for it to work successfully it needs to be hosted on a HTTP server. This is due to browser restrictions on mixed content.
+This can be downloaded and launched in your browser, or hosted somewhere - however for it to work successfully it needs to be hosted using HTTP and not HTTPS. This is due to browser restrictions on mixed content.
 
 
 ## Configuration of tool
