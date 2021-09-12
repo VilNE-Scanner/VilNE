@@ -16,7 +16,7 @@ VilNE - *Victim Initiated Locale Network Enumerator/Exploiter (Villainy)* is a t
 
 VilNE currently:
 
-* Identifies "Up" Web interfaces by timing the responses. - Due to CORS restrictions, it is not possible to read a page, or receive any information such as HTTP response codes. However, by timing the responses the tool can determine what hosts are likely to be up - a host with a web interface that is not allowed will fail much quicker than one which is not there and timesout.
+* Identifies "Up" Web interfaces by timing the responses. - Due to CORS restrictions, it is not possible to read a page or receive any information such as HTTP response codes. However, by timing the responses the tool can determine what hosts are likely to be up - a host with a web interface that is not allowed will fail much quicker than one which is not there and timesout.
 
 * Using the above method, it scans for web-interfaces on the first address of class c(/24) subnets - The logic being that often this address will often have a device with a web interface of some description. Doing this allows the tool to quickly determine which subnets to scan in more depth. This is not foolproof, and future versions may also scan several other common address. 
 
