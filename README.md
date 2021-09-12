@@ -41,9 +41,9 @@ VilNE currently:
 ## Limitations - and possible bypasses
 
 * CORS 
- *  https://book.hacktricks.xyz/pentesting-web/cors-bypass does highlight some bypasses to many of the CORS restrictions. However this tool is designed to not use things like CORS misconfigurations. 
- * Inability to modify HTTP Headers - Pre-flight checks mean that CORS restrictions kick in if you attempt to modify HTTP headers - this means certain vulnerabilities will not work.
- * Inability to view the response - Attacks such as SQL injection generally will not work, although I'd be interested to guage timeout speeds based on blind SQL injection attempts.
+  *  https://book.hacktricks.xyz/pentesting-web/cors-bypass does highlight some bypasses to many of the CORS restrictions. However this tool is designed to not use things like CORS misconfigurations. 
+  * Inability to modify HTTP Headers - Pre-flight checks mean that CORS restrictions kick in if you attempt to modify HTTP headers - this means certain vulnerabilities will not work.
+  * Inability to view the response - Attacks such as SQL injection generally will not work, although I'd be interested to guage timeout speeds based on blind SQL injection attempts.
 
 * Mixed-Content
- * Modern browsers are restrictive on the content that can be retrieved. E.g You cannot request HTTP content from an HTTPs page - This means that VilNE must be hosted on a HTTP page (or locally hosted - e.g. A phishing email with an HTML attachment). However, a compromised web page could simply redirect to the script which is hosted on HTTP on the malicious actors infrastructure.
+  * Modern browsers are restrictive on the content that can be retrieved. E.g You cannot request HTTP content from an HTTPs page - This means that VilNE must be hosted on a HTTP page (or locally hosted - e.g. A phishing email with an HTML attachment). However, a compromised web page could simply redirect to the script which is hosted on HTTP on the malicious actors infrastructure.
