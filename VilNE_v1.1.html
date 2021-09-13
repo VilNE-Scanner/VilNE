@@ -8,7 +8,7 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
   <title>VilNE - Victim Initiated Local Network Enumerator/Exploiter</title>
- 
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
@@ -28,13 +28,15 @@
   <!-- Our application root element -->
   <div id="app">
     <b-container>
-      <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter </h2>
+      <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter</h2>
       <h5 style="color:red; font-size: smaller">VILNE will scan your internal networks and if Attack Hosts is
         selected, will attempt to blindly throw fake attacks at those hosts.
         While these are fake attacks, it would be trivial to change these to a library of real attacks, and the
         information gathered could easily be sent to an 3rd party.
         Use of this tool or any variations thereof is at your own risk, and the creator is not responsible for
-        any damaged caused by this or any future variations.</h5>
+        any damaged caused by this or any future variations.
+      <br/>
+      YOU MUST ENSURE YOU HAVE THE PERMISSION OF THE NETWORK OWNER BEFORE RUNNING THIS TOOL!</h5>
       <b-row style="padding-top:1rem;">
         <b-col>
           <h5>Class C Discovery Timeout</h5>
@@ -89,11 +91,16 @@
           <b-button variant="outline-primary" @click="reset">Reset</b-button>
         </b-col>
       </b-row>
+      <h5>Network Discovery</h5>
+      <b-progress :value="overallstatuscurrent" :max="overallstatusmax" show-progress animated></b-progress>
+      <h5>Host Discovery</h5>
+      <b-progress :value="substatuscurrent" :max="substatusmax" show-progress animated></b-progress>
+
       <b-row style="padding-top:1rem;">
-        <b-col>
-          <b-progress :value="statuscurrent" :max="statusmax" show-progress animated></b-progress>
+        <b-col>          
           <br />
           <b-card title="Status">
+            
             <b-card-text v-if="status==0">Waiting</b-card-text>
             <b-card-text v-if="status==1">Discovering Potential Network: {{addressBeingScanned}}</b-card-text>
             <b-card-text v-if="status==2">Scanning For Devices</b-card-text>
@@ -101,14 +108,18 @@
           </b-card>
         </b-col>
       </b-row>
+      
+      
       <b-row v-for="(network, id) of classCs" :key="id" style="padding-top:1rem;">
         <b-col>
+          
           <b-card title="Discovered Network:">
             <b-card-text>{{network}}.0
               {{networksScanned[network] && networksScanned[network].done ? "Complete" : ""}}
             </b-card-text>
 
             <template v-if="networksScanned[network] && networksScanned[network].items.length">
+              
               <h4>Discovered Hosts:</h4>
               <b-card-text v-for="result in networksScanned[network].items" :key="result">
                 {{result}}
@@ -145,8 +156,10 @@
         networks: ["192.168", "10.0"],
         newNetwork: "",
         status: 0,
-        statusmax: 0,
-        statuscurrent: 0,
+        overallstatusmax: 0,
+        overallstatuscurrent: 0,
+        substatusmax: 0,
+        substatuscurrent: 0,
         attackHosts: false,
         payloads: [
           ["GET", "evil=stuff&other=true"],
@@ -184,8 +197,8 @@
               //Find potential networks
               for (let i = 0; i <= 255; i++) {
                 if (!this.stop) {
-                  this.statuscurrent++;
-                  this.statusmax = (this.networks.length * 255);
+                  this.overallstatuscurrent++;
+                  this.overallstatusmax = (this.networks.length * 255);
                   let ip = `http://${network}.${i}.1`;
                   this.addressBeingScanned = `${network}.${i}.0`;
                   if (await this.scanHost(ip, this.discoveryTimeout)) {
@@ -203,6 +216,8 @@
           //Scan each discovered network
           for (let classC of this.classCs) {
             if (!this.stop) {
+              this.substatuscurrent++;
+              this.substatusmax = (this.classCs.length * 255);
               //Create list of addresses to scan
               let addressesToScan = []
               for (let i = 1; i < 255; i++) {
@@ -260,7 +275,7 @@
             this.classCs = [];
             this.networksScanned = {};
             this.newNetwork = "";
-            this.statuscurrent = 0;
+            this.overallstatuscurrent = 0;
             this.status = 0;
             this.stop = false;
           }
