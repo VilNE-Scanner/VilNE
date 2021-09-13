@@ -16,7 +16,7 @@ I recently came upon a blog post about CORS bypasses using DNS Rebinding which i
 
 Quite honestly, I'm not sure that VilNE is doing anything new, and if this is already old news, well I've enjoyed learning a lot about any area which I had (and still have) not a huge amount of knowledge in. I feel that this may be an area which hasn't had much consideration, certainly as a defender this is going to give me a different view, and I think it bolsters the argument for zero trust and treating everything as hostile.
 
-I would like to thank Steve Stone at Vectra AI whose JavaScript development skills are insane in comparison to my year 2000 geocities levels of web coding! He has also tested it with Vectra Detect, although I am not personally affiliated with Vectra. Also Dan Strivens for providing well needed infrastructure for the testing of this.
+I would like to thank Steve Stone at Vectra AI whose JavaScript development skills are insane in comparison to my year 2000 geocities levels of web coding! He has also tested it with Vectra Detect, although I am not personally affiliated with Vectra, and he also pointed out that VilNE could be pronounced Villany (Can't believe I missed it!). Also a big thanks to Dan Strivens for providing well needed infrastructure for the testing of this.
 
 
 
