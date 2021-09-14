@@ -3,7 +3,7 @@ VilNE Scanner
 
 
 ![Overview](/images/V-1.0-Overview.png)
-![Overview](VilNE%20Attack%20Path.png)
+![Overview](/images/VilNE%20Attack%20Path.png)
 
 
 
