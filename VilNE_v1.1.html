@@ -319,7 +319,7 @@
       },
       computed: {
         validNetwork: function () {
-          if (this.newNetwork.match(/\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b$/g)) {
+          if (this.newNetwork.match(/^\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b$/g)) {
             return true;
           }
           return false;
