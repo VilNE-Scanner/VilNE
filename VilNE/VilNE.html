@@ -35,8 +35,9 @@
         information gathered could easily be sent to an 3rd party.
         Use of this tool or any variations thereof is at your own risk, and the creator is not responsible for
         any damaged caused by this or any future variations.
-      <br/>
-      YOU MUST ENSURE YOU HAVE THE PERMISSION OF THE NETWORK OWNER BEFORE RUNNING THIS TOOL!</h5>
+        <br />
+        YOU MUST ENSURE YOU HAVE THE PERMISSION OF THE NETWORK OWNER BEFORE RUNNING THIS TOOL!
+      </h5>
       <b-row style="padding-top:1rem;">
         <b-col>
           <h5>Class C Discovery Timeout</h5>
@@ -97,10 +98,10 @@
       <b-progress :value="substatuscurrent" :max="substatusmax" show-progress animated></b-progress>
 
       <b-row style="padding-top:1rem;">
-        <b-col>          
+        <b-col>
           <br />
           <b-card title="Status">
-            
+
             <b-card-text v-if="status==0">Waiting</b-card-text>
             <b-card-text v-if="status==1">Discovering Potential Network: {{addressBeingScanned}}</b-card-text>
             <b-card-text v-if="status==2">Scanning For Devices</b-card-text>
@@ -108,18 +109,18 @@
           </b-card>
         </b-col>
       </b-row>
-      
-      
+
+
       <b-row v-for="(network, id) of classCs" :key="id" style="padding-top:1rem;">
         <b-col>
-          
+
           <b-card title="Discovered Network:">
             <b-card-text>{{network}}.0
               {{networksScanned[network] && networksScanned[network].done ? "Complete" : ""}}
             </b-card-text>
 
             <template v-if="networksScanned[network] && networksScanned[network].items.length">
-              
+
               <h4>Discovered Hosts:</h4>
               <b-card-text v-for="result in networksScanned[network].items" :key="result">
                 {{result}}
