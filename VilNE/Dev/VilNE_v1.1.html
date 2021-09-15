@@ -215,12 +215,12 @@
           this.status = 2;
           //Scan each discovered network
           for (let classC of this.classCs) {
-            if (!this.stop) {
-              this.substatuscurrent++;
+            if (!this.stop) {              
               this.substatusmax = (this.classCs.length * 255);
               //Create list of addresses to scan
               let addressesToScan = []
               for (let i = 1; i < 255; i++) {
+                this.substatuscurrent++;
                 if (!this.stop) {
                   for (let port of this.ports) {
                     addressesToScan.push(
