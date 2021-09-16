@@ -3,7 +3,6 @@ VilNE Scanner
 
 http://vilne.infosecamateur.com (ensure it is HTTP and not HTTPS)
 
-![Overview](/images/V-1.0-Overview.png)
 ![Overview](/images/VilNE%20Attack%20Path.png)
 
 
