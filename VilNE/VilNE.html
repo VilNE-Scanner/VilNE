@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,10 +29,10 @@
 <body>
   <!-- Our application root element -->
   <div id="app">
-    <b-container>
+    <b-container><center>
       <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter</h2>
       <h4><a href="https://github.com/VilNE-Scanner/VilNE/">https://github.com/VilNE-Scanner/VilNE/</a></h4>
-
+    </center>
       <h5 style="color:red; font-size: smaller">VILNE will scan your internal networks and if Attack Hosts is
         selected, will attempt to blindly throw fake attacks at those hosts.
         While these are fake attacks, it would be trivial to change these to a library of real attacks, and the
@@ -94,6 +96,10 @@
           <b-button variant="outline-primary" @click="reset">Reset</b-button>
         </b-col>
       </b-row>
+      <b-row>
+        <h8 style="color:rgb(196, 82, 196)">Note, on Linux the below ports are quite likely just <i>filtered</i> and unavailable (but indicate the presence of a device), whereas on Windows they are likely <i>open</i> and thus reachable. This seems to be due to the difference in timeout speeds on the different OSes.
+        A network with high latency or unreliable connection will also affect the results</h8>
+      </b-row>
       <h5>Network Discovery</h5>
       <b-progress :value="overallstatuscurrent" :max="overallstatusmax" show-progress animated></b-progress>
       <h5>Host Discovery</h5>
@@ -123,7 +129,7 @@
 
             <template v-if="networksScanned[network] && networksScanned[network].items.length">
 
-              <h4>Discovered Hosts:</h4>
+              <h4>Filtered or online port</h4>
               <b-card-text v-for="result in networksScanned[network].items" :key="result">
                 {{result}}
               </b-card-text>
@@ -148,8 +154,8 @@
     var app = new Vue({
       el: '#app',
       data: {
-        discoveryTimeout: 200,
-        timeout: 1000,
+        discoveryTimeout: 300,
+        timeout: 500,
         ipGroupSize: 50,
         addressBeingScanned: "",
         classCs: [],
