@@ -174,7 +174,7 @@
         <template slot="title">
             {{network}}.0
         </template>
-		  <template v-for="result in networksScanned[network].items" :key="result"><br/><h8><a href="{{result}}" target="_blank">{{result}}</a></h8></template>	
+		  <template v-for="result in networksScanned[network].items" :key="result"><br/><h8><a :href="result" target="_blank">{{result}}</a></h8></template>	
 		</b-tab>
     </template>
 	</b-tabs>
