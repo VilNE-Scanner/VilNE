@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,112 +27,153 @@
 <body>
   <!-- Our application root element -->
   <div id="app">
-    <b-container><center>
-      <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter</h2>
-      <h4><a href="https://github.com/VilNE-Scanner/VilNE/">https://github.com/VilNE-Scanner/VilNE/</a></h4>
-    </center>
-      
-      
+    <b-container>
+      <center>
+        <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter</h2>
+        <h4><a href="https://github.com/VilNE-Scanner/VilNE/">https://github.com/VilNE-Scanner/VilNE/</a></h4>
+      </center>
+
+
       <b-row style="padding-top:1rem;">
-        
-        <b-col>
-          <h5>Wired or Quick / Wifi or Slow</h5>          
-              <b-form-group class="mt-3">
-              <b-form-radio v-model="quickNetwork" value="true" @input="networkSelect" >Wired or Quick</b-form-radio>
-              <b-form-radio v-model="quickNetwork" value="false" @input="networkSelect">WiFi or Slow</b-form-radio>
-              </b-form-group>
-              
-  
-              
-        </b-col>
 
         <b-col>
-          <h5>Adjust Settings including Class B's and ports</h5>          
-              <b-input-group button class="mt-3">
-              <b-form-checkbox v-model="adjustSettings"  button>
-                {{ adjustSettings ? 'Yes' : 'No' }}
-              </b-form-checkbox>
+          <h5>Wired or Quick / Wifi or Slow</h5>
+          <b-form-group class="mt-3">
+            <b-form-radio v-model="quickNetwork" value="quick" @input="networkSelect" default>Wired or Quick
+            </b-form-radio>
+            <b-form-radio v-model="quickNetwork" value="slow" @input="networkSelect">WiFi or Slow</b-form-radio>
+            <b-form-radio v-model="quickNetwork" value="custom" @input="networkSelect">Change settings including ports &
+              networks</b-form-radio>
+          </b-form-group>
+
+
+
         </b-col>
-        <b-col>
+
+
         </template>
-       <h5>Attack Hosts</h5>
-       <b-input-group button class="mt-3">
-         <b-form-checkbox v-model="attackHosts" button-variant="warning" button>
-           {{ attackHosts ? 'Yes' : 'No' }}
-         </b-form-checkbox>
-       </b-input-group>
-     </b-col>
-       
- 
+
+
+
       </b-row>
       <template v-if="adjustSettings">
-      <b-row style="padding-top:1rem;">
-        <b-col>
-          <h5>Class C Discovery Timeout</h5>
-          <b-form-input v-model="discoveryTimeout" />
-        </b-col>
-      </b-row>
-      <b-row style="padding-top:1rem;">
-        <b-col>
-          <h5>Host Scan Timeout</h5>
-          <b-form-input v-model="timeout">
-        </b-col>
-      </b-row>
-      <b-row style="padding-top:1rem;">
-        <b-col>
-          <h5>Host Scan Group Size</h5>
-          <b-form-input v-model="ipGroupSize"></b-form-input>
-        </b-col>
-      </b-row>
-   
-      <b-row style="padding-top:1rem;">
-        <b-col>
-          <h5>Class B Networks To Scan</h5>
-          <b-input-group class="mt-3">
-            <b-form-input v-model="newNetwork" :state="newNetwork ? validNetwork : null"></b-form-input>
-            <b-input-group-append>
-              <b-button variant="success" @click="addNetwork">Add</b-button>
-            </b-input-group-append>
-          </b-input-group>
-          <div v-for="(network,i) in networks">{{network}} <a href="#" @click="deleteNetwork(i)">X</a></div>
-        </b-col>
-        <b-col>
-          <h5>Ports To Scan</h5>
-          <b-input-group class="mt-3">
-            <b-form-input v-model="newPort" :state="newPort ? validPort : null"></b-form-input>
-            <b-input-group-append>
-              <b-button variant="success" @click="addPort" type="number">Add</b-button>
-            </b-input-group-append>
-          </b-input-group>
-          <div v-for="(port,i) in ports">{{port}} <a href="#" @click="deletePort(i)">X</a></div>
-        </b-col>
-      </template>
-        
-      </b-row>
-      <b-row style="padding-top:1rem;">
-        <b-col>
-          <b-button variant="success" @click="scanNow">Scan Now</b-button>
-          <b-button variant="outline-primary" @click="reset">Reset</b-button>
-        </b-col>
-      </b-row>
-      <b-row>
-        <h5 style="color:red; font-size: smaller">VILNE will scan your internal networks and if Attack Hosts is
-          selected, will attempt to blindly throw fake attacks at those hosts.
-          While these are fake attacks, it would be trivial to change these to a library of real attacks, and the
-          information gathered could easily be sent to an 3rd party.
-          Use of this tool or any variations thereof is at your own risk, and the creator is not responsible for
-          any damaged caused by this or any future variations.
-          <br />
-          YOU MUST ENSURE YOU HAVE THE PERMISSION OF THE NETWORK OWNER BEFORE RUNNING THIS TOOL!
-        </h5>
-        <h5 style="color:rgb(196, 82, 196); font-size:smaller">Note, on Linux the below ports are quite likely just <i>filtered</i> and unavailable (but indicate the presence of a device), whereas on Windows they are likely <i>open</i> and thus reachable. This seems to be due to the difference in timeout speeds on the different OSes.
-        A network with high latency or unreliable connection will also affect the results</h5>
-      </b-row>
-      <h5>Network Discovery</h5>
-      <b-progress :value="overallstatuscurrent" :max="overallstatusmax" show-progress animated></b-progress>
-      <h5>Host Discovery</h5>
-      <b-progress :value="substatuscurrent" :max="substatusmax" show-progress animated></b-progress>
+        <b-row style="padding-top:1rem;">
+          <b-col>
+            <h5>Class C Discovery Timeout</h5>
+            <b-form-input v-model="discoveryTimeout" />
+          </b-col>
+        </b-row>
+        <b-row style="padding-top:1rem;">
+          <b-col>
+            <h5>Host Scan Timeout</h5>
+            <b-form-input v-model="timeout">
+          </b-col>
+        </b-row>
+        <b-row style="padding-top:1rem;">
+          <b-col>
+            <h5>Host Scan Group Size</h5>
+            <b-form-input v-model="ipGroupSize"></b-form-input>
+          </b-col>
+        </b-row>
 
+        <b-row style="padding-top:1rem;">
+          <b-col>
+            <h5>Class B Networks To Scan</h5>
+            <b-input-group class="mt-3">
+              <b-form-input v-model="newNetwork" :state="newNetwork ? validNetwork : null"></b-form-input>
+              <b-input-group-append>
+                <b-button variant="success" @click="addNetwork">Add</b-button>
+              </b-input-group-append>
+            </b-input-group>
+            <div v-for="(network,i) in networks">{{network}} <a href="#" @click="deleteNetwork(i)">X</a></div>
+          </b-col>
+          <b-col>
+            <h5>Ports To Scan</h5>
+            <b-input-group class="mt-3">
+              <b-form-input v-model="newPort" :state="newPort ? validPort : null"></b-form-input>
+              <b-input-group-append>
+                <b-button variant="success" @click="addPort" type="number">Add</b-button>
+              </b-input-group-append>
+            </b-input-group>
+            <div v-for="(port,i) in ports">{{port}} <a href="#" @click="deletePort(i)">X</a></div>
+          </b-col>
+      </template>
+      <br /><br />
+      </b-row>
+      <b-row style="padding-top:1rem;">
+        <b-col>
+          <b-button v-b-toggle.collapse-1 variant="warning">Read before using</b-button>
+          <b-collapse id="collapse-1" class="mt-2">
+            <b-card>
+              <p class="card-text">
+                <h5 style="color:red; font-size: smaller">
+                  VILNE will scan your internal networks and if Attack Hosts is
+                  selected, will attempt to blindly throw fake attacks at those hosts.
+                  While these are fake attacks, it would be trivial to change these to a library of real attacks, and
+                  the
+                  information gathered could easily be sent to an 3rd party.
+                  Use of this tool or any variations thereof is at your own risk, and the creator is not responsible for
+                  any damaged caused by this or any future variations.
+                  YOU MUST ENSURE YOU HAVE THE PERMISSION OF THE NETWORK OWNER BEFORE RUNNING THIS TOOL!</h5>
+
+                <h5 style="color:rgb(196, 82, 196); font-size:smaller">Note, on Linux the below ports are quite likely
+                  just <i>filtered</i> and unavailable (but indicate the presence of a device), whereas on Windows they
+                  are likely <i>open</i> and thus reachable. This seems to be due to the difference in timeout speeds on
+                  the different OSes.
+                  A network with high latency or unreliable connection will also affect the results</h5>
+
+
+                <br /><br />
+                <h5 style="font-size: medium;">Simulate attack? (Dummy GET and POST)</h5>
+                <b-input-group button class="mt-3">
+                  <b-form-checkbox v-model="attackHosts" button-variant="warning" button>
+                    {{ attackHosts ? 'Yes' : 'No' }}
+                  </b-form-checkbox>
+                </b-input-group>
+                <br /><br />
+                <b-button variant="success" @click="scanNow">Scan Now</b-button>
+                <b-button variant="outline-primary" @click="reset">Reset</b-button>
+
+            </b-card>
+
+          </b-collapse>
+        </b-col>
+        <b-col>
+
+          <b-button v-b-toggle.collapse-2 variant="primary">More about VilNE</b-button>
+          <b-collapse id="collapse-2" class="mt-2">
+            <b-card>
+              <p class="card-text">
+                <img src="https://raw.githubusercontent.com/VilNE-Scanner/VilNE/main/images/VilNE%20Attack%20Path.png">
+                <h3>What is VilNE?</h3>
+                VilNE - Victim Initiated Local Network Enumerator/Exploiter (Pronounced Villainy) is a tool to show
+                proof of concepts which may highlight the potential attack surface present within an organisation's
+                internal network. This attack surface will often be under-estimated with vulnerality management perhaps
+                not giving it the attention that it requires.
+                <br/>
+                <h3>So What?</h3>
+                An attack like this could easily be conducted from a malicious redirect on a webpage such as in a waterhole attack, and would potentially compromise servers where they are least protected and monitored.
+                <h3>More info including how it works</h3>
+                Please consult the ReadMe on the github:<br/>
+                <h4><a href="https://github.com/VilNE-Scanner/VilNE/">https://github.com/VilNE-Scanner/VilNE/</a></h4>
+
+              </p>
+            </b-card>
+          </b-collapse>
+        </b-col>
+
+      </b-row>
+
+
+
+
+      <b-row style="padding-top:1rem;">
+        <br /> <br />
+        <h5>Network Discovery</h5>
+        <b-progress :value="overallstatuscurrent" :max="overallstatusmax" show-progress animated></b-progress>
+        <h5>Host Discovery</h5>
+        <b-progress :value="substatuscurrent" :max="substatusmax" show-progress animated></b-progress>
+      </b-row>
       <b-row style="padding-top:1rem;">
         <b-col>
           <br />
@@ -200,10 +240,15 @@
         substatuscurrent: 0,
         attackHosts: false,
         adjustSettings: false,
-        quickNetwork: true,
-        networkOptions: [
-          {text: "Wired/Quick", value: "true"},
-          {text: "Wifi/Slow", value: "false"}
+        quickNetwork: "quick",
+        networkOptions: [{
+            text: "Wired/Quick",
+            value: "true"
+          },
+          {
+            text: "Wifi/Slow",
+            value: "false"
+          }
         ],
         payloads: [
           ["GET", "evil=stuff&other=true"],
@@ -220,16 +265,20 @@
             alert("Not a valid network!");
           }
         },
-        networkSelect: function(){
-          if (this.quickNetwork=="true"){
-            this.discoveryTimeout=300;
-            this.timeout=500;
-            this.ipGroupSize=50;
+        networkSelect: function () {
+          if (this.quickNetwork == "quick") {
+            this.discoveryTimeout = 350;
+            this.timeout = 500;
+            this.ipGroupSize = 50;
+            this.adjustSettings = false;
+          } else if (this.quickNetwork == "slow") {
+            this.discoveryTimeout = 800;
+            this.timeout = 1000;
+            this.ipGroupSize = 10;
+            this.adjustSettings = false;
           }
-          else if (this.quickNetwork=="false"){
-            this.discoveryTimeout=800;
-            this.timeout=1000;
-            this.ipGroupSize=10;
+          if (this.quickNetwork == "custom") {
+            this.adjustSettings = true;
           }
         },
         deleteNetwork: function (i) {
@@ -272,31 +321,31 @@
           //Scan each discovered network
           for (let classC of this.classCs) {
             if (!this.stop) {
-              
-              
+
+
               //Create list of addresses to scan
               let addressesToScan = []
               for (let i = 1; i < 255; i++) {
                 if (!this.stop) {
-                  
+
                   for (let port of this.ports) {
                     addressesToScan.push(
                       `${(port == 443 ? "https" : "http")}://${classC}.${i}:${port}`);
                   }
                 }
               }
-              
+
               //Cut list of addresses to scan down into groups
               let groups = this.createGroups(addressesToScan);
-              if (groups){
-              this.substatusmax = (this.classCs.length*255*this.ports.length);
+              if (groups) {
+                this.substatusmax = (this.classCs.length * 255 * this.ports.length);
               }
               //Scan each group of addresses
               for (let group of groups) {
                 if (!this.stop) {
                   //Create arrays of promised functions of each group IPs 
                   let itemsToScan = [];
-                  
+
                   for (let address of group) {
                     if (!this.stop) {
                       this.substatuscurrent++;
@@ -339,6 +388,8 @@
             this.networksScanned = {};
             this.newNetwork = "";
             this.overallstatuscurrent = 0;
+            this.substatuscurrent = 0;
+            this.substatusmax = 0;
             this.status = 0;
             this.stop = false;
           }
@@ -382,7 +433,8 @@
       },
       computed: {
         validNetwork: function () {
-          if (this.newNetwork.match(/^\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b$/g)) {
+          if (this.newNetwork.match(
+              /^\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b$/g)) {
             return true;
           }
           return false;
@@ -393,9 +445,9 @@
           }
           return false
         },
-        
 
-        
+
+
       }
     })
   </script>
