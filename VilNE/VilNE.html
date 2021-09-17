@@ -272,27 +272,34 @@
           //Scan each discovered network
           for (let classC of this.classCs) {
             if (!this.stop) {
-              this.substatuscurrent++;
-              this.substatusmax = (this.classCs.length * 255);
+              
+              
               //Create list of addresses to scan
               let addressesToScan = []
               for (let i = 1; i < 255; i++) {
                 if (!this.stop) {
+                  
                   for (let port of this.ports) {
                     addressesToScan.push(
                       `${(port == 443 ? "https" : "http")}://${classC}.${i}:${port}`);
                   }
                 }
               }
+              
               //Cut list of addresses to scan down into groups
               let groups = this.createGroups(addressesToScan);
+              if (groups){
+              this.substatusmax = (this.classCs.length*255*this.ports.length);
+              }
               //Scan each group of addresses
               for (let group of groups) {
                 if (!this.stop) {
                   //Create arrays of promised functions of each group IPs 
                   let itemsToScan = [];
+                  
                   for (let address of group) {
                     if (!this.stop) {
+                      this.substatuscurrent++;
                       itemsToScan.push(this.scanHost(address, this.timeout));
                     }
                   }
