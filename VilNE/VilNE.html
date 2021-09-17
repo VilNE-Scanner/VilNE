@@ -50,11 +50,6 @@
 
         </b-col>
 
-
-        </template>
-
-
-
       </b-row>
       <template v-if="adjustSettings">
         <b-row style="padding-top:1rem;">
@@ -101,12 +96,11 @@
       <br /><br />
       </b-row>
       <b-row style="padding-top:1rem;">
-        <b-col>
-          <b-button v-b-toggle.collapse-1 variant="warning">Read before using</b-button>
-          <b-collapse id="collapse-1" class="mt-2">
-            <b-card>
-              <p class="card-text">
-                <h5 style="color:red; font-size: smaller">
+       
+          	
+        <b-tabs content-class="mt-3">
+          		<b-tab title="Run scan">
+                  <h5 style="color:red; font-size: smaller">
                   VILNE will scan your internal networks and if Attack Hosts is
                   selected, will attempt to blindly throw fake attacks at those hosts.
                   While these are fake attacks, it would be trivial to change these to a library of real attacks, and
@@ -134,17 +128,25 @@
                 <b-button variant="success" @click="scanNow">Scan Now</b-button>
                 <b-button variant="outline-primary" @click="reset">Reset</b-button>
 
-            </b-card>
+		
 
-          </b-collapse>
-        </b-col>
-        <b-col>
+		 <h5>Network Discovery</h5>
+        <b-progress :value="overallstatuscurrent" :max="overallstatusmax" show-progress animated></b-progress>
+        <h5>Host Discovery</h5>
+        <b-progress :value="substatuscurrent" :max="substatusmax" show-progress animated></b-progress>
+     
+          <br />
+          <b-card title="Status">
 
-          <b-button v-b-toggle.collapse-2 variant="primary">More about VilNE</b-button>
-          <b-collapse id="collapse-2" class="mt-2">
-            <b-card>
-              <p class="card-text">
-                <img src="https://raw.githubusercontent.com/VilNE-Scanner/VilNE/main/images/VilNE%20Attack%20Path.png">
+            <b-card-text v-if="status==0">Waiting</b-card-text>
+            <b-card-text v-if="status==1">Discovering Potential Network: {{addressBeingScanned}}</b-card-text>
+            <b-card-text v-if="status==2">Scanning For Devices</b-card-text>
+            <b-card-text v-if="status==3">Scan Complete</b-card-text>
+          </b-card>
+	</b-tab>
+         <b-tab title="Further Information">
+              
+                <b-img src="https://raw.githubusercontent.com/VilNE-Scanner/VilNE/main/images/VilNE%20Attack%20Path.png">
                 <h3>What is VilNE?</h3>
                 VilNE - Victim Initiated Local Network Enumerator/Exploiter (Pronounced Villainy) is a tool to show
                 proof of concepts which may highlight the potential attack surface present within an organisation's
@@ -156,58 +158,34 @@
                 <h3>More info including how it works</h3>
                 Please consult the ReadMe on the github:<br/>
                 <h4><a href="https://github.com/VilNE-Scanner/VilNE/">https://github.com/VilNE-Scanner/VilNE/</a></h4>
-
-              </p>
-            </b-card>
-          </b-collapse>
-        </b-col>
-
-      </b-row>
-
-
-
-
-      <b-row style="padding-top:1rem;">
-        <br /> <br />
-        <h5>Network Discovery</h5>
-        <b-progress :value="overallstatuscurrent" :max="overallstatusmax" show-progress animated></b-progress>
-        <h5>Host Discovery</h5>
-        <b-progress :value="substatuscurrent" :max="substatusmax" show-progress animated></b-progress>
-      </b-row>
-      <b-row style="padding-top:1rem;">
+		<br /> <br />
+       
+             
+            </b-tab>
+          </b-tabs>
+        </b-row>
         <b-col>
-          <br />
-          <b-card title="Status">
-
-            <b-card-text v-if="status==0">Waiting</b-card-text>
-            <b-card-text v-if="status==1">Discovering Potential Network: {{addressBeingScanned}}</b-card-text>
-            <b-card-text v-if="status==2">Scanning For Devices</b-card-text>
-            <b-card-text v-if="status==3">Scan Complete</b-card-text>
-          </b-card>
-        </b-col>
-      </b-row>
-
-
-      <b-row v-for="(network, id) of classCs" :key="id" style="padding-top:1rem;">
-        <b-col>
-
-          <b-card title="Discovered Network:">
-            <b-card-text>{{network}}.0
-              {{networksScanned[network] && networksScanned[network].done ? "Complete" : ""}}
-            </b-card-text>
-
-            <template v-if="networksScanned[network] && networksScanned[network].items.length">
-
-              <h4>Filtered or online port</h4>
-              <b-card-text v-for="result in networksScanned[network].items" :key="result">
-                {{result}}
-              </b-card-text>
-            </template>
-          </b-card>
+          <br/>
+          <br/>
+  <b-tabs content-class="mt-3">
+		<template v-for="(network, id) of classCs" :key="id" style="padding-top:1rem;">
+    <b-tab 
+      :title-link-class="{ update_trigger_hack: status }">
+        <template slot="title">
+            {{network}}.0
+        </template>
+		  <template v-for="result in networksScanned[network].items" :key="result"><br/><h8><a href="{{result}}" target="_blank">{{result}}</a></h8></template>	
+		</b-tab>
+    </template>
+	</b-tabs>
+  
+        
         </b-col>
       </b-row>
     </b-container>
   </div>
+  <br/>
+  <br/>
 
   <style>
     body {
