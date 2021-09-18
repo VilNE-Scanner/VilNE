@@ -28,13 +28,20 @@
   <!-- Our application root element -->
   <div id="app">
     <b-container>
-      <center>
+      <b-row style="padding-top:1rem; max-height: 30rem;">
+      
+        <b-col cols="10">
+          
         <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter</h2>
         <h4><a href="https://github.com/VilNE-Scanner/VilNE/">https://github.com/VilNE-Scanner/VilNE/</a></h4>
-      </center>
+     
+      </b-col>
+      <b-col>
+        <b-img right src="https://raw.githubusercontent.com/VilNE-Scanner/VilNE/main/images/vilNE%20logo%20small.png"  fluid></b-img>
+      </b-col>
+    </b-row>
 
-
-      <b-row style="padding-top:1rem;">
+      <b-row style="padding-top:1rem; max-height: 30rem;">
 
         <b-col>
           <h5>Wired or Quick / Wifi or Slow</h5>
@@ -49,6 +56,7 @@
 
 
         </b-col>
+        
 
       </b-row>
       <template v-if="adjustSettings">
