@@ -1,0 +1,624 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+  <title>VilNE - Victim Initiated Local Network Enumerator/Exploiter</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+  <!-- Required Stylesheets -->
+  <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+  <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+
+  <!-- Load polyfills to support older browsers -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
+
+  <!-- Required scripts -->
+  <script src="https://unpkg.com/vue@latest/dist/vue.js"></script>
+  <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+</head>
+
+<body>
+  <!-- Our application root element -->
+  <div id="app">
+    <b-container>
+      <b-row style="padding-top:1rem; max-height: 30rem;">
+
+        <b-col cols="10">
+
+          <h2>VilNE - Victim Initiated Local Network Enumerator/Exploiter - Log4J Edition</h2>
+          <h4><a href="https://github.com/VilNE-Scanner/VilNE/">https://github.com/VilNE-Scanner/VilNE/</a></h4>
+          <h4><font color=red>New - Scan for Log4J</font color></h4>
+
+        </b-col>
+        <b-col>
+          <b-img right src="https://raw.githubusercontent.com/VilNE-Scanner/VilNE/main/images/vilNE%20logo%20small.png"
+            fluid></b-img>
+        </b-col>
+      </b-row>
+      <b-tabs content-class="mt-3">
+        <b-tab title="Run scan">
+
+          </b-row>
+          <b-row style="padding-top:1rem;">
+            <b-col style="text-align: center;">
+
+              <h7>This Log4J scanner will scan the class C ports within the Class B networks you provide with your provided canary token (<a href="https://canarytokens.org/">https://canarytokens.org/</a>). 
+                It will simply send append it to the URI string and do a post to a "User" field. CORs restrictions will likely prevent much of this.
+                This is an adaption of the VilNE Proof of concept which is designed to show how an external webpage could potentially be used to launch attacks against internal services</h7>
+              <br />
+              <br />
+              <b-card>
+                <h5>Network</h5>
+                <br/>
+                Note, this defaults to scanning the 192.168.0.0/16 and 10.0.0.0/16 subnets.
+                <b-form-group class="mt-3">
+                  <b-form-radio v-model="quickNetwork" value="quick" @input="networkSelect" default>Wired or Quick
+                  </b-form-radio>
+                  <b-form-radio v-model="quickNetwork" value="slow" @input="networkSelect">WiFi or Slow</b-form-radio>
+                  <b-form-radio v-model="quickNetwork" value="custom" @input="networkSelect">Change settings including
+                    ports
+                    &
+                    networks</b-form-radio>
+
+                  <br />
+                  <template v-if="adjustSettings">
+                    <b-row style="padding-top:1rem;">
+                      <b-col>
+                        <h5>Class C Discovery Timeout</h5>
+                        <b-form-input v-model="discoveryTimeout" />
+                      </b-col>
+                    </b-row>
+                    <b-row style="padding-top:1rem;">
+                      <b-col>
+                        <h5>Host Scan Timeout</h5>
+                        <b-form-input v-model="timeout">
+                      </b-col>
+                    </b-row>
+                    <b-row style="padding-top:1rem;">
+                      <b-col>
+                        <h5>Host Scan Group Size</h5>
+                        <b-form-input v-model="ipGroupSize"></b-form-input>
+                      </b-col>
+                    </b-row>
+
+                    <b-row style="padding-top:1rem;">
+                      <b-col>
+                        <h5>Class B Networks To Scan</h5>
+                        <b-input-group class="mt-3">
+                          <b-form-input v-model="newNetwork" :state="newNetwork ? validNetwork : null"></b-form-input>
+                          <b-input-group-append>
+                            <b-button variant="success" @click="addNetwork">Add</b-button>
+                          </b-input-group-append>
+                        </b-input-group>
+                        <div v-for="(network,i) in networks">{{network}} <a href="#" @click="deleteNetwork(i)">X</a>
+                        </div>
+                      </b-col>
+                      <b-col>
+                        <h5>IP which denotes a Class B is active (1-254)</h5>
+                        <b-form-input v-model="aliveIP"></b-form-input>
+                      </b-col>
+                      <b-col>
+                        <h5>Ports To Scan</h5>
+                        <b-input-group class="mt-3">
+                          <b-form-input v-model="newPort" :state="newPort ? validPort : null"></b-form-input>
+                          <b-input-group-append>
+                            <b-button variant="success" @click="addPort" type="number">Add</b-button>
+                          </b-input-group-append>
+                        </b-input-group>
+                        <div v-for="(port,i) in ports">{{port}} <a href="#" @click="deletePort(i)">X</a></div>
+                      </b-col>
+
+                      <br />
+                  </template>
+
+                  
+                  
+                  <b-row style="padding-top:1rem;">
+                    <b-col>
+                      <h5>Input your Canary Token string here</h5>
+                      <b-form-input v-model="canaryToken">
+                    </b-col>
+                    </b-row><br/>
+                    <b-form-checkbox v-model="attackHosts" button-variant="secondary" button>
+                      {{ attackHosts ? 'Sending' : 'Tick to Send' }}
+                    </b-form-checkbox>
+                   
+                  </b-row> 
+                  <br/>
+                
+
+                  <br /><br />
+
+
+                  <b-button v-b-toggle.collapse-1 variant="primary">Terms of Use</b-button>
+                  <b-collapse id="collapse-1" class="mt-2">
+                    <b-card>
+                      <p class="card-text">By using this POC tool you understand that it will in effect port scan
+                        multiple internal networks. If you choose to simulate attack, then the scan will include a GET
+                        and
+                        POST requests containing what should be benign data.<br />
+                        The creator of this tool would strongly suggest you do this only on networks you control, and by using it
+                        you
+                        accept the creator accepts no responsibility for any damage caused by running it.<br />
+                        This is a proof of concept of an attack path - adversaries may already be doing this, however
+                        the
+                        creator of this tool takes no responsibility for any future derivations or mis-use of the tool
+                        and any
+                        of the code within.
+
+                      </p>
+
+                  </b-collapse><br />
+                  <b-form-checkbox id="checkbox-1" v-model="terms" name="checkbox-1">
+                    <h5 style="color:red;">
+                      I accept the terms of use + have the network owner's permission</h5>
+                  </b-form-checkbox>
+                </b-form-group>
+            </b-col>
+          </b-row>
+          </b-card>
+          </b-card>
+
+          <b-row style="padding-top:1rem; max-height: 30rem;">
+            </h5>
+            <b-button variant="success" @click="scanNow" :disabled="isDisabled">Scan for open or filtered ports
+            </b-button>
+            <b-button variant="outline-primary" @click="reset">Reset</b-button>
+
+
+
+            <h5>Network Discovery</h5>
+            <b-progress :value="overallstatuscurrent" :max="overallstatusmax" show-progress animated></b-progress>
+            <h5>Host Discovery</h5>
+            <b-progress :value="substatuscurrent" :max="substatusmax" show-progress animated></b-progress>
+
+            <br />
+            <b-card title="Status">
+
+              <b-card-text v-if="status==0">Waiting</b-card-text>
+              <b-card-text v-if="status==1">Discovering Potential Network: {{addressBeingScanned}}</b-card-text>
+              <b-card-text v-if="status==2">Scanning For Devices</b-card-text>
+              <b-card-text v-if="status==3">Scan Complete</b-card-text>
+              <b-tabs content-class="mt-3">
+                <template v-for="(network, id) of classCs" :key="id" style="padding-top:1rem;">
+                  <b-tab :title-link-class="{ update_trigger_hack: status }">
+                    <template slot="title">
+                      {{network}}.0
+                    </template>
+                    <template v-for="result in networksScanned[network].items" :key="result"><br />
+                      <h8><a :href="result" target="_blank">{{result}}</a></h8>
+                    </template>
+                  </b-tab>
+                </template>
+              </b-tabs>
+            </b-card>
+
+          </b-row>
+        </b-tab>
+        <b-tab title="Diagram of the attack path">
+          <b-img src="https://raw.githubusercontent.com/VilNE-Scanner/VilNE/main/images/VilNE%20Attack%20Path.png"
+            fluid-grow>
+          </b-img>
+        </b-tab>
+        <b-tab title="What is VilNE and how does it work?">
+
+          VilNE - Victim Initiated Local Network Enumerator/Exploiter (Pronounced Villainy) is a tool to show how a
+          malicious webpage can:
+          <br />
+          <ul>
+            <li>
+              Reveal to an adversary the services within the network.
+            </li>
+            <li>
+              Blindly attempt to exploit internal services - similar to how botnets propagate by attacking vulnerable
+              services exposed to the internet.
+            </li>
+            <br /><br />
+            <h4>The contraints</h4>
+            <br />
+            Modern Browsers have several protections built in to protect internal services:
+            <li>CORS (Cross-Origin Resource Sharing) Restrictions - A big topic, but for our purposes a webpage can't
+              view content from another webpage hosted elsewhere that hasn't been explicitly permitted by it. E.g.
+              www.bob.com/javascript.js can't read www.alice.com/page.html. There are other
+              restrictions around what options are available without what is called a 'Pre flight request', we can't
+              change the user agent for example.
+            </li>
+            <li>Mixed Content Restrictions - Again a big topic, but for our purposes an HTTPS page can't even request
+              resources from an HTTP location. (does not apply the other away around)
+            </li>
+            <br />
+            So by working within these parameters, we are still able to send GET and POST requests to any IP address
+            so long as the scanner itself is on HTTP and not HTTPs. We only have to look at what unpatched services
+            are vulnerable to very simple exploits on the wider internet to estimate how big a problem this
+            will be internally.
+            <br /><br />
+            <h4>
+              How the tool works
+            </h4>
+            <br />
+            <li>
+              Timing the responses to know what's up - As a rule, a port that is up but CORS restricted will respond
+              much quicker than one which is not there and times-out. We can therefore use this to determine what IP
+              and ports are online.
+              There does seem to be a difference in the network stacks in Operating Systems. When scanned on some
+              operating systems such as Linux, an IP that is up but filtering a port will cause it to fail in an
+              indistinguishable amount of time from a CORS error. This means that the tool can
+              potentially identify IP addresses which are up but NOT offering web services - arguably more valuable
+              from a reconnaisance point of view.
+            </li>
+            <li>
+              Currently, given a set of Class B address (e.g. 192.168.0.0/16) - the tool will try every class C to see
+              if a host is available on the first IP on port 80, e.g. 192.168.1.1. The logic is that most subnets have
+              a device such as a router on the first IP - although this does admittedly potentially restrict it.
+              <br />
+              I will consider adjusting this, although ultimately this is a proof of concept and not an attack
+              framework.
+            </li>
+            <li>
+              The tool then scans those subnets for the ports you've selected - on Windows the results are more
+              accurate, but on Linux it may reveal hosts which are online but filtering.
+            </li>
+            <li>
+              If 'Attack Hosts' is enabled then when it scans the hosts it will attempt a benign GET and POST exploit.
+              In reality this could be a large bank of attacks for common vulnerabilities.
+            </li>
+
+
+
+          </ul>
+        </b-tab>
+
+        <b-tab title="Why this is a problem">
+          <li>
+            Wide spread scanning of the internet for vulnerable servers is known about, and relatively well protected.
+            These are often simple Remote Code Execution exploits within GET or POST parameters.
+          </li><br />
+          <li>
+            Internal services are often not patched as urgently, but also things which wouldn't typically be available
+            online. How many times have we heard "It's not exposed to the internet, no problem!"
+          </li><br />
+          <li>
+            This tool demonstrates that there's very little to stop someone's browser doing the very same above
+            attacks on this soft underbelly of the network.
+          </li><br />
+          <li>
+            A compromised internal service is likely to be outside of any DMZ and may afford an attacker far easier
+            lateral movement ability.
+          </li><br />
+          <li>
+            An attack like this could easily be conducted from a malicious redirect on a webpage such as in a
+            waterhole
+            attack, or a could herald a return to the Exploit Kit days.
+          </li><br />
+          <li>
+            <i>
+              VilNE only demonstrates the high level concept, there are many other things I can imagine it could do,
+              such as trying common internal hostnames instead of IP addresses either by brute force or word lists.
+            </i>
+          </li>
+
+
+        </b-tab>
+        <b-tab title="Detection and prevention">
+
+
+          <li><b>Patch</b> - An obvious one - while not preventing the above scanning, it would at least prevent the
+            botnet-like drive by exploitation.</li><br />
+          <li><b>Browsers</b> - Bulk scanning such as what this tool does could be restricted by browsers, by perhaps
+            rate limiting or placing restrictions on unique IP/Port attempts, or failure codes across a series of
+            hosts.</li><br />
+          <li><b>Browsers</b> - Browsers could maybe prevent parameters being sent until CORS is resolved, such as
+            when doing pre-flight checks.</li><br />
+          <li><b>NDR</b> - This tool has been tested against Vectra Detect, which correctly detects the behaviour as
+            scanning activity.</li><br />
+          <li><b>EDR</b> - I haven't tested this on any EDR tools, however given the noise this would generate I would
+            imagine it may come under existing rules for blocking of port scans.</li><br />
+          <li><b>Web applications</b> - As well as patch, ensure all applicable CORS + CSRF protections are in place
+            and tested.</li><br />
+          <li><b>Proxy/Enforcing WAF/IDS</b> - Enforce ALL traffic connecting to a Web application to utilise security
+            platforms such as a WAF with up-to-date rules. Implement least-privilege where possible so that only
+            authorised users/IPs can connect.</li><br />
+          <li><b>Port Scan detection rules</b> - While within a subnet, port scanning detections using firewall logs
+            is more of a challenge, however a rule which looks for a single internal host attempting the same port on
+            many internal destinations should be considered.</li><br />
+          <li><b>IDS/WAF/Proxy logs</b> - By enforcing users into a path via IDS/WAF/Proxy in order to connect to a
+            web application, you can ensure that detection opportunities are maximised. If you see an internal IP
+            trigger a rule, this warrants attention!</li><br />
+        </b-tab>
+
+        <b-tab title="Something isn't working...">
+
+          <b><i>As a proof of concept, I've tested it on a few of my devices but I'm sure there's circumstances I've not anticipated! However the following are things I've encountered:</i></b>
+          <br/><br/>
+          <li><b>Network not detected</b> - If there is a device on the .1, then the default scan should work. You may
+            need to select 'Wifi or Slow' or simply adjust the network discovery time. If there is not a device on the
+            .1 address, add a known address (e.g. 254) to the 'IP which denotes a Class B is active' in the settings
+          </li><br />
+          <li><b>IPs not detected</b> - You may need to select 'Wifi or Slow' or adjust the host discovery time. You can
+            also attempt to reduce the 'Host Scan Group Size'.</li><br />
+          <li><b>Unknown IPs and/or ports are showing</b> - It may be that the device is up, but the port is filtered.
+            Filtered ports may show up depending on the operating system you have ran the scan from. (On some Operating
+            systems a RST results in an almost immediate timeout, whereas on others it takes longer which affects the
+            results). Both behaviours arguably are useful - filtered ports still tell an adversary that a port is up</li><br />
+
+        </b-tab>
+
+
+
+
+      </b-tabs>
+      </b-row>
+      <b-col>
+        <br />
+        <br />
+
+
+
+      </b-col>
+      </b-row>
+    </b-container>
+  </div>
+  <br />
+  <br />
+
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    b-col {
+      font-weight: 200;
+    }
+  </style>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        discoveryTimeout: 300,
+        timeout: 500,
+        ipGroupSize: 50,
+        addressBeingScanned: "",
+        aliveIP: 1,
+        classCs: [],
+        networksScanned: {},
+        ports: ["80", "443", "8000", "8080", "8001"],
+        newPort: "",
+        networks: ["192.168", "10.0"],
+        newNetwork: "",
+        status: 0,
+        overallstatusmax: 0,
+        overallstatuscurrent: 0,
+        substatusmax: 0,
+        substatuscurrent: 0,
+        terms: false,
+        attackHosts: false,
+        adjustSettings: false,
+        quickNetwork: "quick",
+        networkOptions: [{
+            text: "Wired/Quick",
+            value: "true"
+          },
+          {
+            text: "Wifi/Slow",
+            value: "false"
+          }
+        ],
+        payloads: [
+         // ["GET", "evil=stuff&other=true"],
+        //  ["POST", "queryString=icouldbeveryevil"],
+          ["GET"],
+          ["POST"]
+        ],
+        stop: false
+      },
+      methods: {
+        addNetwork: function () {
+          if (this.validNetwork) {
+            this.networks.push(this.newNetwork);
+            this.newNetwork = "";
+          } else {
+            alert("Not a valid network!");
+          }
+        },
+        networkSelect: function () {
+          if (this.quickNetwork == "quick") {
+            this.discoveryTimeout = 350;
+            this.timeout = 500;
+            this.ipGroupSize = 50;
+            this.adjustSettings = false;
+          } else if (this.quickNetwork == "slow") {
+            this.discoveryTimeout = 800;
+            this.timeout = 1000;
+            this.ipGroupSize = 10;
+            this.adjustSettings = false;
+          }
+          if (this.quickNetwork == "custom") {
+            this.adjustSettings = true;
+          }
+        },
+        deleteNetwork: function (i) {
+          this.networks.splice(i, 1);
+        },
+        addPort: function () {
+          this.ports.push(this.newPort);
+          this.newPort = "";
+        },
+        deletePort: function (i) {
+          this.ports.splice(i, 1);
+        },
+        reset: function () {
+          this.stop = true;
+        },
+        scanNow: async function () {
+          this.status = 1;
+          for (let network of this.networks) {
+            if (!this.stop) {
+              let liveHosts = [];
+              //Find potential networks
+              for (let i = 0; i <= 255; i++) {
+                if (!this.stop) {
+                  this.overallstatuscurrent++;
+                  this.overallstatusmax = (this.networks.length * 255);
+                  let ip = `http://${network}.${i}.${this.aliveIP}`;
+                  this.addressBeingScanned = `${network}.${i}.0`;
+                  if (await this.scanHost(ip, this.discoveryTimeout)) {
+                    this.classCs.push(`${network}.${i}`);
+                    Vue.set(this.networksScanned, `${network}.${i}`, {
+                      done: false,
+                      items: []
+                    });
+                  }
+                }
+              }
+            }
+          }
+          this.status = 2;
+          //Scan each discovered network
+          for (let classC of this.classCs) {
+            if (!this.stop) {
+
+
+              //Create list of addresses to scan
+              let addressesToScan = []
+              for (let i = 1; i < 255; i++) {
+                if (!this.stop) {
+
+                  for (let port of this.ports) {
+                    addressesToScan.push(
+                      `${(port == 443 ? "https" : "http")}://${classC}.${i}:${port}`);
+                  }
+                }
+              }
+
+              //Cut list of addresses to scan down into groups
+              let groups = this.createGroups(addressesToScan);
+              if (groups) {
+                this.substatusmax = (this.classCs.length * 255 * this.ports.length);
+              }
+              //Scan each group of addresses
+              for (let group of groups) {
+                if (!this.stop) {
+                  //Create arrays of promised functions of each group IPs 
+                  let itemsToScan = [];
+
+                  for (let address of group) {
+                    if (!this.stop) {
+                      this.substatuscurrent++;
+                      itemsToScan.push(this.scanHost(address, this.timeout));
+                    }
+                  }
+                  //Run each group and wait for it to finish
+                  let scanResults = await Promise.all(itemsToScan);
+                  //Parse the results from each group
+                  for (let result of scanResults) {
+                    if (!this.stop) {
+                      if (result) {
+                        this.networksScanned[classC].items.push(result);
+                        if (this.attackHosts) {
+                            this.canaryVar="user="+this.canaryToken
+                            this.attackHost("GET", result, this.canaryVar);
+                            this.attackHost("POST", result, this.canaryVar);
+                          
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              this.networksScanned[classC].done = true;
+
+              //Check if the scanning is complete
+              let complete = true;
+              for (let item of Object.values(this.networksScanned)) {
+                if (!item.done) {
+                  complete = false;
+                }
+              }
+              if (complete) {
+                this.status = 3;
+              }
+            }
+          }
+          if (this.stop) {
+            this.classCs = [];
+            this.networksScanned = {};
+            this.newNetwork = "";
+            this.overallstatuscurrent = 0;
+            this.substatuscurrent = 0;
+            this.substatusmax = 0;
+            this.status = 0;
+            this.stop = false;
+          }
+        },
+        scanHost: async function (address, timeout) {
+          let startTime = moment().valueOf();
+          try {
+            let result = await axios({
+              method: "GET",
+              url: address,
+              timeout: timeout
+            })
+          } catch (err) {
+            let endTime = moment().valueOf();
+            let totalTime = endTime - startTime;
+            if (totalTime >= timeout) {
+              return (false);
+            } else {
+              return address;
+            }
+          }
+        },
+        attackHost: function (method, address, payload) {
+          axios({
+            method: method,
+            data: method == "GET" ? "" : payload,
+            url: method == "GET" ? address + "?" + payload : address,
+            timeout: this.timeout
+          })
+        },
+        createGroups: function (array) {
+          return array.reduce((resultArray, item, index) => {
+            const groupIndex = Math.floor(index / this.ipGroupSize)
+            if (!resultArray[groupIndex]) {
+              resultArray[groupIndex] = []
+            }
+            resultArray[groupIndex].push(item)
+            return resultArray
+          }, [])
+        }
+      },
+      computed: {
+        validNetwork: function () {
+          if (this.newNetwork.match(
+              /^\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b$/g)) {
+            return true;
+          }
+          return false;
+        },
+        validPort: function () {
+          if (this.newPort > 0 && this.newPort <= 63535) {
+            return true;
+          }
+          return false
+        },
+        isDisabled: function () {
+          return !this.terms;
+        }
+
+
+
+      }
+    })
+  </script>
+</body>
+
+</html>
