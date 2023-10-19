@@ -1,7 +1,7 @@
 # VilNE
 VilNE Scanner 
 
-http://vilne.infosecamateur.com (ensure it is HTTP and not HTTPS)
+CURRENTLY DOWN - More recent browser updates have made this un-reliable
 
 *Please see issues page for known bugs (e.g. unreliable on Wifi)*
 
